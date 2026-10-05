@@ -1,0 +1,94 @@
+aspect_aliases:
+  flavor: taste
+  flavour: taste
+  taste: taste
+
+  cost: price
+  value: price
+
+  package: packaging
+  parcel: packaging
+
+  shipping: delivery
+  shipment: delivery
+
+  smell: scent
+  aroma: scent
+
+  freshness: freshness
+  fresh: freshness
+
+  texture: texture
+  quality: quality
+  quantity: quantity
+  ingredients: ingredients
+
+
+# ---------- LLM configuration ----------
+
+llm:
+
+  # OpenAI-compatible API endpoint.
+  # Groq provides access to the selected LLM through this endpoint.
+  base_url: https://api.groq.com/openai/v1
+
+  # LLM used for review analysis and report generation.
+  model: openai/gpt-oss-120b
+
+  # Low temperature gives more consistent structured output.
+  temperature: 0.2
+
+  # Maximum number of output tokens.
+  max_tokens: 1200
+
+  # Maximum number of attempts for a failed API request.
+  max_retries: 5
+
+  # Delay between retry attempts and between batch requests.
+  delay_seconds: 6
+
+  # Reasoning effort supported by the selected model/API.
+  reasoning_effort: low
+
+
+# ---------- Dataset configuration ----------
+
+data:
+
+  # Original Amazon review dataset.
+  raw_csv: data/Reviews.csv
+
+  # Cleaned and balanced sample used for LLM analysis.
+  sample_csv: data/sample_reviews.csv
+  # Number of reviews selected from each star-rating class.
+  # 15 reviews x 5 ratings = 75 reviews.
+  per_star: 15
+
+  # Ignore extremely short reviews.
+  min_chars: 40
+
+  # Prevent excessively long reviews from dominating analysis.
+  max_chars: 600
+
+  # Fixed seed makes the sample reproducible.
+  seed: 42
+
+
+# ---------- Output files ----------
+
+paths:
+
+  # Individual LLM analysis results.
+  results_csv: output/results.csv
+
+  # Review-level evaluation results.
+  evaluation_csv: output/evaluation.csv
+
+  # Aggregated aspect statistics.
+  aspects_csv: output/aspects.csv
+
+  # Accuracy, MAE and confusion matrices.
+  metrics_txt: output/metrics.txt
+
+  # LLM-generated business report.
+  report_md: output/report.md

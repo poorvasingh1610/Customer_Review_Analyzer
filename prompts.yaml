@@ -1,0 +1,160 @@
+system_analyze: |
+  You are an NLP-based customer feedback analyst.
+
+  Your task is to analyze customer reviews using:
+  1. Overall sentiment classification
+  2. Rating estimation
+  3. Aspect extraction
+  4. Aspect-level sentiment classification
+  5. Short text summarization
+  6. Business action generation
+
+  You must return valid JSON only.
+  Do not include markdown, explanations, or text outside the JSON object.
+
+system_report: |
+  You are a business analyst specializing in customer feedback analysis.
+
+  You receive aggregated NLP results extracted from customer reviews.
+  Your task is to convert these results into a concise and evidence-based
+  business report.
+
+  Use only the information provided in the input.
+  Do not invent statistics, customer opinions, or product information.
+
+analyze_review: |
+  Analyze the customer review below.
+
+  Return a JSON object with exactly these keys:
+
+  - "sentiment":
+      One of:
+      "positive", "negative", "neutral", "mixed"
+
+  - "score":
+      An integer from 1 to 5 representing the overall customer satisfaction.
+      1 = very dissatisfied
+      2 = dissatisfied
+      3 = neutral or uncertain
+      4 = satisfied
+      5 = very satisfied
+
+  - "aspects":
+      A list of objects representing specific product or service aspects
+      explicitly mentioned in the review.
+
+      Each aspect object must contain exactly:
+      - "aspect": a short lowercase aspect name, preferably 1-2 words
+      - "sentiment": "positive", "negative", or "neutral"
+      - "evidence": a short exact or near-exact phrase from the review
+                   that supports the aspect and its sentiment
+
+            Use these standard aspect categories whenever applicable:
+      taste, price, quality, packaging, delivery, freshness,
+      texture, quantity, ingredients, scent, health,
+      availability, ease_of_use, performance, other
+
+      Rules for aspect names:
+      - Prefer one of the standard categories above.
+      - Do not create multiple names for the same concept.
+        For example, use "taste" instead of "flavor" or "flavour".
+      - Return each aspect at most once per review.
+      - If the same aspect is discussed multiple times, combine the evidence
+        into one aspect entry.
+      - Use "other" only when the aspect clearly does not fit any
+        standard category.
+
+      Do not create an aspect if the review does not provide evidence for it.
+
+  - "summary":
+      One concise sentence summarizing the main opinion in no more than 20 words.
+
+  - "action":
+      One short, concrete suggestion for the business based only on
+      the problems identified in the review.
+      If no action is necessary, return "none".
+
+  Rules:
+
+  1. Base every prediction only on the review text.
+     Never invent facts or external information.
+
+  2. Determine the overall sentiment from the complete review.
+     Do not determine overall sentiment from a single sentence.
+
+  3. Use "mixed" when the review contains both clear positive and
+     clear negative opinions.
+
+  4. Use "neutral" when the review is mainly factual, uncertain,
+     or does not contain a clear positive or negative opinion.
+
+  5. Aspect sentiment must be independent of overall sentiment.
+     For example, a review can be overall "mixed" while:
+       taste = positive
+       price = negative
+
+  6. Extract only aspects that are explicitly discussed or strongly
+     supported by the review.
+
+  7. Do not infer an aspect merely because it is common in product reviews.
+
+  8. The evidence for every aspect must come from the review itself.
+
+  9. Do not use the customer's star rating, if mentioned in the text,
+     to determine sentiment or score.
+
+  10. If the review is empty, meaningless, or contains no useful information,
+      return:
+      {
+        "sentiment": "neutral",
+        "score": 3,
+        "aspects": [],
+        "summary": "No meaningful customer feedback was provided.",
+        "action": "none"
+      }
+
+  Review:
+  """
+  {review}
+  """
+
+report: |
+  You are given aggregated NLP results from {n} analyzed customer reviews.
+
+  Sentiment distribution:
+  {sentiment_dist}
+
+  Aspect statistics:
+  The table contains the number of positive, negative, and neutral
+  mentions for each extracted aspect.
+
+  {aspect_stats}
+
+  Suggested actions generated from non-positive reviews:
+  {actions}
+
+  Write a concise markdown business report with exactly these sections:
+
+  # Overall Sentiment
+  Write 2 concise sentences describing the overall distribution.
+  Include approximate percentages based only on the supplied data.
+
+  # Top 3 Things Customers Like
+  List the three aspects with the strongest positive customer feedback.
+  Include the positive mention count.
+
+  # Top 3 Problems Customers Face
+  List the three aspects with the strongest negative customer feedback.
+  Include the negative mention count.
+
+  # Three Prioritized Recommendations
+  Provide exactly three practical recommendations.
+  Prioritize the most important problems based on the supplied
+  negative aspect counts and suggested actions.
+
+  Rules:
+  - Use only the supplied data.
+  - Do not invent numbers.
+  - Do not introduce aspects that are absent from the data.
+  - Do not claim that correlation or causation has been established.
+  - Keep the report under 300 words.

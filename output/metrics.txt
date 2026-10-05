@@ -1,0 +1,40 @@
+Successful analyses: 75
+
+Method A - LLM sentiment label (mixed counted as neutral): 65.3%
+Method B - LLM 1-5 score mapped to sentiment: 73.3%
+Mean absolute error (LLM score vs original rating): 0.47 stars
+
+--- Method A ---
+              precision    recall  f1-score   support
+
+    negative       0.91      0.70      0.79        30
+     neutral       0.33      0.73      0.46        15
+    positive       0.89      0.57      0.69        30
+
+    accuracy                           0.65        75
+   macro avg       0.71      0.67      0.65        75
+weighted avg       0.79      0.65      0.69        75
+
+Confusion matrix:
+               pred_negative  pred_neutral  pred_positive
+true_negative             21             9              0
+true_neutral               2            11              2
+true_positive              0            13             17
+
+--- Method B ---
+              precision    recall  f1-score   support
+
+    negative       0.85      0.93      0.89        30
+     neutral       0.37      0.47      0.41        15
+    positive       0.87      0.67      0.75        30
+
+    accuracy                           0.73        75
+   macro avg       0.70      0.69      0.69        75
+weighted avg       0.76      0.73      0.74        75
+
+Confusion matrix:
+               pred_negative  pred_neutral  pred_positive
+true_negative             28             2              0
+true_neutral               5             7              3
+true_positive              0            10             20
+
